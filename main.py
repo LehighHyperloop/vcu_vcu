@@ -5,17 +5,33 @@ import string
 
 import subsystems
 
-ss_map = {
-    "compressor": subsystems.Compressor()
-}
 
 # Setup client
 client = mqtt.Client()
 client.connect("localhost", 1883)
 client.loop_start()
+client.subscribe("cmd")
+
+ss_map = {
+    "compressor": subsystems.Compressor(client)
+}
+
+def cmd(msg_str):
+    cmd_split = string.split(msg_str)
+    if cmd_split[0] == "set":
+        target = ss_map[cmd_split[1]]
+        state  = cmd_split[2]
+
+        if target != None:
+            target.set_target_state(state)
+
 
 _ss_map_mqtt = {}
 def on_message(mosq, obj, msg):
+    if msg.topic == "cmd":
+        cmd(msg.payload)
+        return
+
     msg_json = json.loads(msg.payload)
 
     mapped_ss = _ss_map_mqtt[msg.topic]
@@ -41,6 +57,7 @@ try:
                   str(ss.last_update()) + "s"
 
         time.sleep(0.1);
+
 except KeyboardInterrupt:
     print("Shutting down...")
     print("Done!")

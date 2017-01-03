@@ -1,20 +1,22 @@
 import time
+import json
 
 class Subsystem():
+    _client = None
+
     _prefix = "subsystem/"
 
-    _states         = {}
-    _states_reverse = {}
+    _states = []
 
-    _current_state = 0
-    _target_state  = 0
+    _current_state = None
+    _target_state  = None
     _last_update   = -1
 
-    def __init__(self):
+    def __init__(self, client):
         print "INIT " + self.get_name()
-        # map states in reverse
-        for k, v in self._states.iteritems():
-            self._states_reverse[v] = k
+        self._client = client
+        self._current_state = self._states[0]
+        self._target_state  = self._states[0]
 
     def __init_complete__(self):
         print "DONE " + self.get_name()
@@ -37,3 +39,12 @@ class Subsystem():
         if self._last_update == -1:
             return -1
         return time.time() - self._last_update
+
+    def send_action(self, action, msg):
+        self._client.publish( \
+            self.get_name() + "/" + action, \
+            json.dumps(msg))
+
+    def set_target_state(self, target_state):
+        self._target_state = target_state
+        self.send_action("set", { "t_state": target_state })
