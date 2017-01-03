@@ -46,5 +46,8 @@ class Subsystem():
             json.dumps(msg))
 
     def set_target_state(self, target_state):
-        self._target_state = target_state
-        self.send_action("set", { "t_state": target_state })
+        if target_state in self._states:
+            self._target_state = target_state
+            self.send_action("set", { "t_state": target_state })
+        else:
+            print "Unrecognized state: " + target_state
