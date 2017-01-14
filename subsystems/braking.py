@@ -1,7 +1,7 @@
 from .subsystem import Subsystem
 
 class Braking(Subsystem):
-    _name = "Braking"
+    _name = "braking"
 
     _states = [
         "OFF",
