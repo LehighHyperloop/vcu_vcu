@@ -2,13 +2,14 @@ import json
 import paho.mqtt.client as mqtt
 import time
 import string
-
+import os
 import subsystems
 
 
 # Setup client
 client = mqtt.Client()
-client.connect("localhost", 1883)
+mqtt_IP = os.environ["MQTT_IP"]
+client.connect(mqtt_IP, 1883)
 client.loop_start()
 client.subscribe("cmd")
 
