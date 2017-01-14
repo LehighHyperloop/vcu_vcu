@@ -5,48 +5,42 @@ import string
 
 import subsystems
 
+from command_handler import CommandHandler
 
 # Setup client
 client = mqtt.Client()
 client.connect("localhost", 1883)
 client.loop_start()
-client.subscribe("cmd")
 
+# List subsystems
 ss_map = {
     "compressor": subsystems.Compressor(client)
 }
+topic_to_ss = [ ss.get_name() for key,ss in ss_map.iteritems() ]
 
-def cmd(msg_str):
-    cmd_split = string.split(msg_str)
-    if cmd_split[0] == "set":
-        target = ss_map[cmd_split[1]]
-        state  = cmd_split[2]
-
-        if target != None:
-            target.set_target_state(state)
-
-
-_ss_map_mqtt = {}
+# Handle messages
+command_handler = CommandHandler(ss_map)
 def on_message(mosq, obj, msg):
     if msg.topic == "cmd":
-        cmd(msg.payload)
+        command_handler.cmd(msg.payload)
         return
 
     msg_json = json.loads(msg.payload)
 
-    mapped_ss = _ss_map_mqtt[msg.topic]
-    if not mapped_ss is None:
-        mapped_ss.handle_status_update(msg_json)
-    else:
+    ss = topic_to_ss[msg.topic]
+    if ss is None:
         print "NOT MAPPED " + msg.topic
+    else:
+        mapped_ss.handle_status_update(msg_json)
 
 client.on_message = on_message
 
+# Register to receive mqtt messages
+client.subscribe("cmd")
 for name,ss in ss_map.iteritems():
-    # Register to receive mqtt messages
     client.subscribe(ss.get_name())
-    _ss_map_mqtt[ss.get_name()] = ss
 
+# Loop in main
 try:
     while True:
         for name,ss in ss_map.iteritems():
