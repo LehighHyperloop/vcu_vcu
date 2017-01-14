@@ -17,8 +17,8 @@ client.loop_start()
 ss_map = {
     "braking": subsystems.Braking(client),
     "compressor": subsystems.Compressor(client),
-    "fan": subsystems.Inverters(client),
     "fan": subsystems.Fan(client),
+    "inverters": subsystems.Inverters(client),
     "levitation": subsystems.Levitation(client),
     "propulsion": subsystems.Propulsion(client),
 }
