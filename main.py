@@ -14,9 +14,9 @@ client.loop_start()
 
 # List subsystems
 ss_map = {
-    "compressor": subsystems.Compressor(client)
+    "compressor": subsystems.Compressor(client),
 }
-topic_to_ss = [ ss.get_name() for key,ss in ss_map.iteritems() ]
+topic_to_ss = dict([ [ss.get_name(),ss] for key,ss in ss_map.iteritems() ])
 
 # Handle messages
 command_handler = CommandHandler(ss_map)
@@ -31,14 +31,14 @@ def on_message(mosq, obj, msg):
     if ss is None:
         print "NOT MAPPED " + msg.topic
     else:
-        mapped_ss.handle_status_update(msg_json)
+        ss.handle_status_update(msg_json)
 
 client.on_message = on_message
 
 # Register to receive mqtt messages
 client.subscribe("cmd")
-for name,ss in ss_map.iteritems():
-    client.subscribe(ss.get_name())
+for topic,ss in topic_to_ss.iteritems():
+    client.subscribe(topic)
 
 # Loop in main
 try:
