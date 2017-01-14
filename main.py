@@ -16,6 +16,7 @@ client.loop_start()
 # List subsystems
 ss_map = {
     "compressor": subsystems.Compressor(client),
+    "fan": subsystems.Fan(client),
 }
 topic_to_ss = dict([ [ss.get_name(),ss] for key,ss in ss_map.iteritems() ])
 
