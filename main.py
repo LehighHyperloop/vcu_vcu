@@ -15,8 +15,12 @@ client.loop_start()
 
 # List subsystems
 ss_map = {
+    "braking": subsystems.Braking(client),
     "compressor": subsystems.Compressor(client),
+    "fan": subsystems.Inverters(client),
     "fan": subsystems.Fan(client),
+    "levitation": subsystems.Levitation(client),
+    "propulsion": subsystems.Propulsion(client),
 }
 topic_to_ss = dict([ [ss.get_name(),ss] for key,ss in ss_map.iteritems() ])
 
@@ -52,6 +56,7 @@ try:
                   ") " + \
                   str(ss.last_update()) + "s"
 
+        print ""
         time.sleep(0.1);
 
 except KeyboardInterrupt:
