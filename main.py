@@ -21,6 +21,7 @@ ss_map = {
     "inverters": subsystems.Inverters(client),
     "levitation": subsystems.Levitation(client),
     "propulsion": subsystems.Propulsion(client),
+    "wheels": subsystems.Wheels(client)
 }
 topic_to_ss = dict([ [ss.get_name(),ss] for key,ss in ss_map.iteritems() ])
 
