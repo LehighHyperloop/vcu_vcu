@@ -10,6 +10,7 @@ class Subsystem():
 
     _current_state = None
     _target_state  = None
+    _local_target_state = None
     _last_update   = -1
 
     def __init__(self, client):
@@ -17,6 +18,7 @@ class Subsystem():
         self._client = client
         self._current_state = self._states[0]
         self._target_state  = self._states[0]
+        self._local_target_state  = self._states[0]
 
     def __init_complete__(self):
         print "DONE " + self.get_name()
@@ -31,6 +33,7 @@ class Subsystem():
 
     def state(self):
         return {
+            "local_target_state": self._local_target_state,
             "state": self._current_state,
             "target_state": self._target_state
         }
@@ -47,10 +50,10 @@ class Subsystem():
 
     def set_target_state(self, target_state):
         if target_state in self._states:
-            self._target_state = target_state
+            self._local_target_state = target_state
             self.send_target_state()
         else:
             print "Unrecognized state: " + target_state
 
     def send_target_state(self):
-        self.send_action("set", { "t_state": self._target_state})
+        self.send_action("set", { "t_state": self._local_target_state})
