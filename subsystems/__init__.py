@@ -7,3 +7,4 @@ from .fan import Fan
 from .inverters import Inverters
 from .levitation import Levitation
 from .propulsion import Propulsion
+from .wheels import Wheels
