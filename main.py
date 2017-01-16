@@ -51,6 +51,8 @@ for topic,ss in topic_to_ss.iteritems():
 try:
     while True:
         for name,ss in ss_map.iteritems():
+            ss.send_target_state()
+        for name,ss in ss_map.iteritems():
             # TODO: Make this more clear because this is very obtuse
             print name + "(" + \
                   string.join([ k + ": " + str(v) for k, v in ss.state().iteritems() ], ", ") + \

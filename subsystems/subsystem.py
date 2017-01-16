@@ -48,6 +48,9 @@ class Subsystem():
     def set_target_state(self, target_state):
         if target_state in self._states:
             self._target_state = target_state
-            self.send_action("set", { "t_state": target_state })
+            self.send_target_state()
         else:
             print "Unrecognized state: " + target_state
+
+    def send_target_state(self):
+        self.send_action("set", { "t_state": self._target_state})
