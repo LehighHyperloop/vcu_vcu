@@ -22,7 +22,8 @@ class Compressor(Subsystem):
 
     def handle_status_update(self, msg_json):
         Subsystem.handle_status_update(self, msg_json)
-        self._pressure = msg_json["pressure"]
+        if "pressure" in msg_json:
+            self._pressure = msg_json["pressure"]
 
     def state(self):
         s = Subsystem.state(self)
