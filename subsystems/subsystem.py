@@ -1,59 +1,61 @@
-import time
 import json
+import string
 
 class Subsystem():
     _client = None
 
     _prefix = "subsystem/"
 
-    _states = []
+    _states        = None
+    _states_array  = None
+    _default_state = None
 
-    _current_state = None
-    _target_state  = None
-    _local_target_state = None
-    _last_update   = -1
+    _t_state = None
+    _state   = None
 
     def __init__(self, client):
-        print "INIT " + self.get_name()
+        print "INIT " + self._name
         self._client = client
-        self._current_state = self._states[0]
-        self._target_state  = self._states[0]
-        self._local_target_state  = self._states[0]
+        self._states_array = [ k for k,v in self._states.iteritems() ]
 
-    def __init_complete__(self):
-        print "DONE " + self.get_name()
+        self._t_state = self._default_state
+        self._state = self._default_state
 
-    def get_name(self):
-        return self._prefix + self._name
-
-    def handle_status_update(self, msg_json):
-        self._last_update = time.time()
-        self._current_state = msg_json["state"]
-        self._target_state = msg_json["t_state"]
-
-    def state(self):
+    def get_attributes(self):
         return {
-            "local_target_state": self._local_target_state,
-            "state": self._current_state,
-            "target_state": self._target_state
+            "t_state": self._t_state,
+            "state": self._state
         }
 
-    def last_update(self):
-        if self._last_update == -1:
-            return -1
-        return time.time() - self._last_update
+    def state_transitions(self, current, target):
+        func = self._states[current]
+        if func:
+            new = func(target)
+            if new == False:
+                print("Error switching from " + current + " to " + target)
+                return False
+            return new
+        return False
 
-    def send_action(self, action, msg):
-        self._client.publish( \
-            self.get_name() + "/" + action, \
-            json.dumps(msg))
+    def update(self):
+        # Handle state transitions
+        if self._t_state != self._state:
+            new_state = self.state_transitions(self._state, self._t_state)
+            if new_state:
+                self._state = new_state
+                self.send_heartbeat()
 
     def set_target_state(self, target_state):
         if target_state in self._states:
-            self._local_target_state = target_state
-            self.send_target_state()
+            self._t_state = target_state
         else:
             print "Unrecognized state: " + target_state
 
-    def send_target_state(self):
-        self.send_action("set", { "t_state": self._local_target_state})
+    def send_heartbeat(self):
+        # Send status updates
+        self._client.publish(self._prefix + self._name, json.dumps(self.get_attributes()))
+
+    def __repr__(self):
+        return self._name + "(" + \
+            string.join([ k + ": " + str(v) for k, v in self.get_attributes().iteritems() ], ", ") + \
+            ")"

@@ -3,7 +3,6 @@ import paho.mqtt.client as mqtt
 import time
 import string
 import os
-import subsystems
 
 from command_handler import CommandHandler
 
@@ -13,17 +12,25 @@ mqtt_IP = os.environ["MQTT_IP"]
 client.connect(mqtt_IP, 1883)
 client.loop_start()
 
-# List subsystems
+import hardware
+hw_map = {
+    "yun1": hardware.Yun1(client)
+}
+
+import subsystems
 ss_map = {
-    "braking": subsystems.Braking(client),
     "compressor": subsystems.Compressor(client),
     "fan": subsystems.Fan(client),
-    "inverters": subsystems.Inverters(client),
     "levitation": subsystems.Levitation(client),
     "propulsion": subsystems.Propulsion(client),
-    "wheels": subsystems.Wheels(client)
+    "inverters": subsystems.Inverters(client),
+    "braking": subsystems.Braking(client)
 }
-topic_to_ss = dict([ [ss.get_name(),ss] for key,ss in ss_map.iteritems() ])
+
+topic_to_handler = {}
+
+for _,klass in hw_map.iteritems():
+    topic_to_handler[klass.get_topic()] = klass
 
 # Handle messages
 command_handler = CommandHandler(ss_map)
@@ -34,32 +41,38 @@ def on_message(mosq, obj, msg):
 
     msg_json = json.loads(msg.payload)
 
-    ss = topic_to_ss[msg.topic]
-    if ss is None:
+    handler = topic_to_handler[msg.topic]
+    if handler is None:
         print "NOT MAPPED " + msg.topic
     else:
-        ss.handle_status_update(msg_json)
+        handler.handle_status_update(msg_json)
 
 client.on_message = on_message
 
 # Register to receive mqtt messages
 client.subscribe("cmd")
-for topic,ss in topic_to_ss.iteritems():
+for topic,_ in topic_to_handler.iteritems():
     client.subscribe(topic)
 
 # Loop in main
 try:
     while True:
+        # Update subsystems
         for name,ss in ss_map.iteritems():
-            ss.send_target_state()
+            ss.update()
+
+        # Send updates to hardware
+        for name,hw in hw_map.iteritems():
+            hw.send_sync()
+
+        # Debug
+        for name,hw in hw_map.iteritems():
+            print hw
         for name,ss in ss_map.iteritems():
-            # TODO: Make this more clear because this is very obtuse
-            print name + "(" + \
-                  string.join([ k + ": " + str(v) for k, v in ss.state().iteritems() ], ", ") + \
-                  ") " + \
-                  str(ss.last_update()) + "s"
+            print ss
 
         print ""
+
         time.sleep(0.1);
 
 except KeyboardInterrupt:

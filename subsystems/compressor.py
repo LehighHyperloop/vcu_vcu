@@ -3,32 +3,45 @@ from .subsystem import Subsystem
 class Compressor(Subsystem):
     _name = "compressor"
 
-    _states = [
-        "STOPPED",
-        "VFD_STARTING",
-        "COMPRESSOR_STARTING",
-        "RUNNING",
-        "COMPRESSOR_STOPPING",
-        "VFD_STOPPING",
-        "FAULT",
-        "ESTOP"
-    ]
+    ### LOGIC ###
+    def stopped_func(t):
+        if t == "RUNNING":
+            return "VFD_STARTING"
+        return False
 
-    _pressure = 0
+    def vfd_starting_func(t):
+        if t == "RUNNING":
+            return "COMPRESSOR_STARTING"
+        return False
 
-    def __init__(self, client):
-        Subsystem.__init__(self, client)
-        Subsystem.__init_complete__(self)
+    def compressor_starting_func(t):
+        if t == "RUNNING":
+            return "RUNNING"
+        return False
 
-    def handle_status_update(self, msg_json):
-        Subsystem.handle_status_update(self, msg_json)
-        if "pressure" in msg_json:
-            self._pressure = msg_json["pressure"]
+    def running_func(t):
+        if t == "STOPPED":
+            return "COMPRESSOR_STOPPING"
+        return False
 
-    def state(self):
-        s = Subsystem.state(self)
-        s.update({
-            "pressure": self._pressure
-        })
+    def compressor_stopping_func(t):
+        if t == "STOPPED":
+            return "VFD_STOPPING"
+        return False
 
-        return s
+    def vfd_stopping_func(t):
+        if t == "STOPPED":
+            return "STOPPED"
+        return False
+
+    _states = {
+        "STOPPED": stopped_func,
+        "VFD_STARTING": vfd_starting_func,
+        "COMPRESSOR_STARTING": compressor_starting_func,
+        "RUNNING": running_func,
+        "COMPRESSOR_STOPPING": compressor_stopping_func,
+        "VFD_STOPPING": vfd_stopping_func,
+        "FAULT": None,
+        "ESTOP": None,
+    }
+    _default_state = "STOPPED"

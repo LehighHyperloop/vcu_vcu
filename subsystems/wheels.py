@@ -3,18 +3,24 @@ from .subsystem import Subsystem
 class Wheels(Subsystem):
     _name = "wheels"
 
-    _states = [
-        "UP",
-        "DOWN",
-        "FAULT",
-        "ESTOP"
-    ]
+    def simulate(self):
+        pass
 
-    def __init__(self, client):
-        Subsystem.__init__(self, client)
-        Subsystem.__init_complete__(self)
+    ### LOGIC ###
+    def up_func(t):
+        if t == "DOWN":
+            return "DOWN"
+        return False
 
-    def state(self):
-        s = Subsystem.state(self)
+    def down_func(t):
+        if t == "UP":
+            return "UP"
+        return False
 
-        return s
+    _states = {
+        "UP": up_func,
+        "DOWN": down_func,
+        "FAULT": None,
+        "ESTOP": None
+    }
+    _default_state = "UP"

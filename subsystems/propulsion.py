@@ -3,18 +3,24 @@ from .subsystem import Subsystem
 class Propulsion(Subsystem):
     _name = "propulsion"
 
-    _states = [
-        "STOPPED",
-        "RUNNING",
-        "FAULT",
-        "ESTOP"
-    ]
+    def simulate(self):
+        pass
 
-    def __init__(self, client):
-        Subsystem.__init__(self, client)
-        Subsystem.__init_complete__(self)
+    ### LOGIC ###
+    def stopped_func(t):
+        if t == "RUNNING":
+            return "RUNNING"
+        return False
 
-    def state(self):
-        s = Subsystem.state(self)
+    def running_func(t):
+        if t == "STOPPED":
+            return "STOPPED"
+        return False
 
-        return s
+    _states = {
+        "STOPPED": stopped_func,
+        "RUNNING": running_func,
+        "FAULT": None,
+        "ESTOP": None
+    }
+    _default_state = "STOPPED"

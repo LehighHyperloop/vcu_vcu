@@ -3,18 +3,24 @@ from .subsystem import Subsystem
 class Braking(Subsystem):
     _name = "braking"
 
-    _states = [
-        "OFF",
-        "ON",
-        "FAULT",
-        "ESTOP"
-    ]
+    def simulate(self):
+        pass
 
-    def __init__(self, client):
-        Subsystem.__init__(self, client)
-        Subsystem.__init_complete__(self)
+    ### LOGIC ###
+    def off_func(t):
+        if t == "ON":
+            return "ON"
+        return False
 
-    def state(self):
-        s = Subsystem.state(self)
+    def on_func(t):
+        if t == "OFF":
+            return "OFF"
+        return False
 
-        return s
+    _states = {
+        "OFF": off_func,
+        "ON": on_func,
+        "FAULT": None,
+        "ESTOP": None
+    }
+    _default_state = "OFF"
