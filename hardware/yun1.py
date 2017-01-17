@@ -2,14 +2,6 @@ import json
 import string
 import datetime
 
-# Constants
-RELAY_LEVITATION        = 0
-RELAY_AUX_WHEELS        = 1
-RELAY_BRAKING           = 2
-RELAY_VFD_ENABLE        = 4
-RELAY_COMPRESSOR_START  = 5
-RELAY_COMPRESSOR_ENABLE = 6
-
 class Yun1():
     _name = "arduino-yun1"
     _client = None

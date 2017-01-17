@@ -1,5 +1,7 @@
 from .subsystem import Subsystem
 
+RELAY_AUX_WHEELS = 1
+
 class Wheels(Subsystem):
     _name = "wheels"
 
@@ -9,12 +11,16 @@ class Wheels(Subsystem):
     ### LOGIC ###
     def up_func(hw_map, t):
         if t == "DOWN":
-            return "DOWN"
+            if hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, True):
+                return "DOWN"
+            return False
         return False
 
     def down_func(hw_map, t):
         if t == "UP":
-            return "UP"
+            if hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, False):
+                return "UP"
+            return False
         return False
 
     _states = {
