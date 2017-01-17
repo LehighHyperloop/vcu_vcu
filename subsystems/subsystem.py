@@ -33,9 +33,6 @@ class Subsystem():
         func = self._states[current]
         if func:
             new = func(self.hw_map, target)
-            if new == False:
-                print("Error switching from " + current + " to " + target)
-                return False
             return new
         return False
 
