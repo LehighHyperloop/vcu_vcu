@@ -4,32 +4,32 @@ class Compressor(Subsystem):
     _name = "compressor"
 
     ### LOGIC ###
-    def stopped_func(t):
+    def stopped_func(hw_map, t):
         if t == "RUNNING":
             return "VFD_STARTING"
         return False
 
-    def vfd_starting_func(t):
+    def vfd_starting_func(hw_map, t):
         if t == "RUNNING":
             return "COMPRESSOR_STARTING"
         return False
 
-    def compressor_starting_func(t):
+    def compressor_starting_func(hw_map, t):
         if t == "RUNNING":
             return "RUNNING"
         return False
 
-    def running_func(t):
+    def running_func(hw_map, t):
         if t == "STOPPED":
             return "COMPRESSOR_STOPPING"
         return False
 
-    def compressor_stopping_func(t):
+    def compressor_stopping_func(hw_map, t):
         if t == "STOPPED":
             return "VFD_STOPPING"
         return False
 
-    def vfd_stopping_func(t):
+    def vfd_stopping_func(hw_map, t):
         if t == "STOPPED":
             return "STOPPED"
         return False

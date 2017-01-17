@@ -3,6 +3,7 @@ import string
 
 class Subsystem():
     _client = None
+    hw_map = None
 
     _prefix = "subsystem/"
 
@@ -13,9 +14,10 @@ class Subsystem():
     _t_state = None
     _state   = None
 
-    def __init__(self, client):
+    def __init__(self, client, hw_map):
         print "INIT " + self._name
         self._client = client
+        self.hw_map = hw_map
         self._states_array = [ k for k,v in self._states.iteritems() ]
 
         self._t_state = self._default_state
@@ -30,7 +32,7 @@ class Subsystem():
     def state_transitions(self, current, target):
         func = self._states[current]
         if func:
-            new = func(target)
+            new = func(self.hw_map, target)
             if new == False:
                 print("Error switching from " + current + " to " + target)
                 return False

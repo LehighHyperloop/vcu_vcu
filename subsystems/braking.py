@@ -7,12 +7,12 @@ class Braking(Subsystem):
         pass
 
     ### LOGIC ###
-    def off_func(t):
+    def off_func(hw_map, t):
         if t == "ON":
             return "ON"
         return False
 
-    def on_func(t):
+    def on_func(hw_map, t):
         if t == "OFF":
             return "OFF"
         return False

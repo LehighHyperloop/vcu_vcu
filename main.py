@@ -19,12 +19,12 @@ hw_map = {
 
 import subsystems
 ss_map = {
-    "compressor": subsystems.Compressor(client),
-    "fan": subsystems.Fan(client),
-    "levitation": subsystems.Levitation(client),
-    "propulsion": subsystems.Propulsion(client),
-    "inverters": subsystems.Inverters(client),
-    "braking": subsystems.Braking(client)
+    "compressor": subsystems.Compressor(client, hw_map),
+    "fan": subsystems.Fan(client, hw_map),
+    "levitation": subsystems.Levitation(client, hw_map),
+    "propulsion": subsystems.Propulsion(client, hw_map),
+    "inverters": subsystems.Inverters(client, hw_map),
+    "braking": subsystems.Braking(client, hw_map)
 }
 
 topic_to_handler = {}

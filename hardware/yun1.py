@@ -9,7 +9,6 @@ RELAY_BRAKING           = 2
 RELAY_VFD_ENABLE        = 4
 RELAY_COMPRESSOR_START  = 5
 RELAY_COMPRESSOR_ENABLE = 6
-RELAY_FAN_ENABLE        = 7
 
 class Yun1():
     _name = "arduino-yun1"
@@ -31,7 +30,14 @@ class Yun1():
     }
 
     def set_relay(self, pin, value):
-        self._local_state[pin] = value
+        self._local_state["relays"][pin] = value
+
+    def get_relay(self, pin):
+        return self._remote_state["relays"][pin]
+
+    def set_remote_relay(self, pin, value):
+        self.set_relay(pin, value)
+        return self.get_relay(pin) == value
 
     # Serialization
     def add_timestamp_to_state(self, state):

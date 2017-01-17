@@ -7,12 +7,12 @@ class Wheels(Subsystem):
         pass
 
     ### LOGIC ###
-    def up_func(t):
+    def up_func(hw_map, t):
         if t == "DOWN":
             return "DOWN"
         return False
 
-    def down_func(t):
+    def down_func(hw_map, t):
         if t == "UP":
             return "UP"
         return False
