@@ -25,7 +25,8 @@ ss_map = {
     "propulsion": subsystems.Propulsion(client, hw_map),
     "inverters": subsystems.Inverters(client, hw_map),
     "braking": subsystems.Braking(client, hw_map),
-    "wheels": subsystems.Wheels(client, hw_map)
+    "wheels": subsystems.Wheels(client, hw_map),
+    "suspension": subsystems.Suspension(client, hw_map)
 }
 
 topic_to_handler = {}

@@ -5,3 +5,4 @@ from .propulsion import Propulsion
 from .inverters import Inverters
 from .braking import Braking
 from .wheels import Wheels
+from .suspension import Suspension
