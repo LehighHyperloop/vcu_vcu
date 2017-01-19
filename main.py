@@ -5,6 +5,7 @@ import string
 import os
 
 from command_handler import CommandHandler
+from global_state import GlobalState
 
 # Setup client
 client = mqtt.Client()
@@ -29,13 +30,15 @@ ss_map = {
     "suspension": subsystems.Suspension(client, hw_map)
 }
 
+global_state = GlobalState(client, ss_map)
+
 topic_to_handler = {}
 
 for _,klass in hw_map.iteritems():
     topic_to_handler[klass.get_topic()] = klass
 
 # Handle messages
-command_handler = CommandHandler(ss_map)
+command_handler = CommandHandler(global_state, ss_map)
 def on_message(mosq, obj, msg):
     if msg.topic == "cmd":
         command_handler.cmd(msg.payload)
@@ -59,6 +62,9 @@ for topic,_ in topic_to_handler.iteritems():
 # Loop in main
 try:
     while True:
+        # Update global state
+        global_state.update()
+
         # Update subsystems
         for name,ss in ss_map.iteritems():
             ss.update()
@@ -68,6 +74,7 @@ try:
             hw.send_sync()
 
         # Debug
+        print global_state
         for name,hw in hw_map.iteritems():
             print hw
         for name,ss in ss_map.iteritems():

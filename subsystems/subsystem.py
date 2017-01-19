@@ -23,6 +23,9 @@ class Subsystem():
         self._t_state = self._default_state
         self._state = self._default_state
 
+    def get_state(self):
+        return self._state
+
     def get_attributes(self):
         return {
             "t_state": self._t_state,
