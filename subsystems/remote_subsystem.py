@@ -35,10 +35,10 @@ class Remote_Subsystem(Subsystem):
             "state": self._state
         }
 
-    #just periodically heartbeat your status so the state maintainer (which listens
+    #just periodically send your status so the state maintainer (which listens
     #on remote_subsystem/suspension) can handle the state transitions requested
     def update(self):
-        self.send_heartbeat()
+        self.send_action_set()
 
     def set_target_state(self, target):
         if target in self._states:
@@ -46,8 +46,8 @@ class Remote_Subsystem(Subsystem):
         else:
             print "Unrecognized state: " + target_state
 
-    def send_heartbeat(self):
-        self._client.publish(self._prefix + self._name, json.dumps(self.get_attributes()))
+    def send_action_set(self):
+        self._client.publish(self._prefix + self._name + "/set", json.dumps(self.get_attributes()))
 
     def __repr__(self):
         return self._name + "(" + \
