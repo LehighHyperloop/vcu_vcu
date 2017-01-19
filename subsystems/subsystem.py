@@ -40,7 +40,7 @@ class Subsystem():
         new_state = self.state_transitions(self._state, self._t_state)
         if new_state:
             self._state = new_state
-            self.send_heartbeat()
+        self.send_heartbeat()
 
     def set_target_state(self, target_state):
         if target_state in self._states:
