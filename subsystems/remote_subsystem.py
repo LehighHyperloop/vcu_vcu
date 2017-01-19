@@ -47,7 +47,9 @@ class Remote_Subsystem(Subsystem):
             print "Unrecognized state: " + target_state
 
     def send_action_set(self):
-        self._client.publish(self._prefix + self._name + "/set", json.dumps(self.get_attributes()))
+        self._client.publish(self._prefix + self._name + "/set", json.dumps({
+            "t_state": self._local_t_state
+        }))
 
     def __repr__(self):
         return self._name + "(" + \
