@@ -2,6 +2,7 @@ from .subsystem import Subsystem
 
 import json
 import string
+import time
 
 class Remote_Subsystem(Subsystem):
     _client = None
@@ -42,6 +43,11 @@ class Remote_Subsystem(Subsystem):
     #on remote_subsystem/suspension) can handle the state transitions requested
     def update(self):
         self.send_action_set()
+
+    def handle_status_update(self, msg_json):
+        self._last_update = time.time()
+        self._current_state = msg_json["state"]
+        self._target_state = msg_json["t_state"]
 
     def set_target_state(self, target):
         if target in self._states:
