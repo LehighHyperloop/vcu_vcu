@@ -36,6 +36,9 @@ topic_to_handler = {}
 
 for _,klass in hw_map.iteritems():
     topic_to_handler[klass.get_topic()] = klass
+for _,klass in ss_map.iteritems():
+    if klass.get_topic():
+        topic_to_handler[klass.get_topic()] = klass
 
 # Handle messages
 command_handler = CommandHandler(global_state, ss_map)

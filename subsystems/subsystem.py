@@ -23,6 +23,9 @@ class Subsystem():
         self._t_state = self._default_state
         self._state = self._default_state
 
+    def get_topic(self):
+        return None
+
     def get_state(self):
         return self._state
 

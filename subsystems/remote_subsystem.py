@@ -28,6 +28,9 @@ class Remote_Subsystem(Subsystem):
         self._t_state = self._default_state
         self._state = self._default_state
 
+    def get_topic(self):
+        return self._prefix + self._name
+
     def get_attributes(self):
         return {
             "local_t_state": self._local_t_state,
