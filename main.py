@@ -6,6 +6,7 @@ import os
 
 from command_handler import CommandHandler
 from global_state import GlobalState
+from spacex_telemetry import SpaceXTelemetry
 
 # Setup client
 client = mqtt.Client()
@@ -31,6 +32,7 @@ ss_map = {
 }
 
 global_state = GlobalState(client, ss_map)
+spacex_telemetry = SpaceXTelemetry(global_state)
 
 topic_to_handler = {}
 
@@ -68,6 +70,9 @@ try:
         # Update global state
         global_state.update()
 
+        # Send telemetry
+        spacex_telemetry.send_heartbeat()
+
         # Update subsystems
         for name,ss in ss_map.iteritems():
             ss.update()
@@ -78,6 +83,7 @@ try:
 
         # Debug
         print global_state
+        print spacex_telemetry
         for name,hw in hw_map.iteritems():
             print hw
         for name,ss in ss_map.iteritems():

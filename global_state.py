@@ -192,6 +192,10 @@ class GlobalState():
     }
     _default_state = "STANDBY"
 
+    # Telemetry functions
+    def get_telemetry_status(self):
+        return self._telemetry_state
+
     def __repr__(self):
         return self._name + "(" + \
             string.join([ k + ": " + str(v) for k, v in self.get_attributes().iteritems() ], ", ") + \
