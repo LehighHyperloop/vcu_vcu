@@ -9,7 +9,7 @@ class Suspension(Remote_Subsystem):
     #my brain is fried and we aren't entirely sure what the
     #inputs will look like that actually control this in the hardware
     def idle_func(t):
-        if t == "HOMING":
+        if t == "READY":
             if "some_controller" in hw_map:
                 if hw_map["some_controller"].change_state():
                     return "HOMING"
