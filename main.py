@@ -31,7 +31,12 @@ ss_map = {
     "suspension": subsystems.Suspension(client, hw_map)
 }
 
-global_state = GlobalState(client, ss_map)
+import sensors
+sensor_map = {
+    "accel_sensor": sensors.Accel(client, "center")
+}
+
+global_state = GlobalState(client, ss_map, sensor_map)
 spacex_telemetry = SpaceXTelemetry(global_state)
 
 topic_to_handler = {}
@@ -41,6 +46,10 @@ for _,klass in hw_map.iteritems():
 for _,klass in ss_map.iteritems():
     if klass.get_topic():
         topic_to_handler[klass.get_topic()] = klass
+for _,klass in sensor_map.iteritems():
+    if klass.get_topic():
+        topic_to_handler[klass.get_topic()] = klass
+
 
 # Handle messages
 command_handler = CommandHandler(global_state, ss_map)
@@ -88,6 +97,8 @@ try:
             print hw
         for name,ss in ss_map.iteritems():
             print ss
+        for name,sensor in sensor_map.iteritems():
+            print sensor
 
         print ""
 

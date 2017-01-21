@@ -16,6 +16,7 @@ SPACEX_BRAKING = 5 # Any state when the pod is applying its brakes.
 class GlobalState():
     _client = None
     ss_map = None
+    sensor_map = None
 
     _name = "global_state"
 
@@ -25,9 +26,10 @@ class GlobalState():
 
     _telemetry_state = SPACEX_IDLE
 
-    def __init__(self, client, ss_map):
+    def __init__(self, client, ss_map, sensor_map):
         self._client = client
         self.ss_map = ss_map
+        self.sensor_map = sensor_map
         self._state = self._default_state
 
     def update(self):
@@ -111,9 +113,8 @@ class GlobalState():
 
     def launch_func(self, t):
         self._telemetry_state = SPACEX_READY
-        # TODO:
-        # - Pod forward acceleration >= 0.2g
-        if self.need_ack():
+        if self.sensor_map["accel_sensor"].rolling_avg() >= 0.2 * 9.8 and \
+           self.need_ack():
             return "PUSHING"
         return False
 
