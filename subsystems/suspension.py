@@ -15,4 +15,4 @@ class Suspension(Remote_Subsystem):
         "FAULT": None,
         "ESTOP": None,
     }
-    _default_state = "IDLE"
+    _default_state = "READY"
