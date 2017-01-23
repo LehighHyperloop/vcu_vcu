@@ -43,11 +43,19 @@ class Subsystem():
             return new
         return False
 
+    _time_in_state = None
+    def set_state(self, new_state):
+        self._time_in_state = time.time()
+        self._client.debug("Transition " + self._name + " from " + self._state + " to " + new_state)
+        self._state = new_state
+
+    def time_in_state(self):
+        return time.time() - self._time_in_state
+
     def update(self):
         new_state = self.state_transitions(self._state, self._t_state)
         if new_state:
-            self._client.debug("Transition " + self._name + " from " + self._state + " to " + new_state)
-            self._state = new_state
+            self.set_state(new_state)
         self.send_heartbeat()
 
     def set_target_state(self, target_state):
