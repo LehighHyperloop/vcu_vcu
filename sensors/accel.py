@@ -3,7 +3,7 @@ import collections
 class Accel():
     _client = None
 
-    _prefix = "sensors/"
+    _prefix = "sensor/"
     _name = "accel"
     _location = None
 
