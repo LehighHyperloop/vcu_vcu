@@ -45,6 +45,7 @@ class Subsystem():
     def update(self):
         new_state = self.state_transitions(self._state, self._t_state)
         if new_state:
+            self._client.debug("Transition " + self._name + " from " + self._state + " to " + new_state)
             self._state = new_state
         self.send_heartbeat()
 
