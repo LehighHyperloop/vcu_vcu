@@ -9,16 +9,16 @@ class Levitation(Subsystem):
         pass
 
     ### LOGIC ###
-    def stopped_func(hw_map, t):
+    def stopped_func(self, t):
         if t == "RUNNING":
-            if hw_map["yun1"].set_remote_relay(RELAY_LEVITATION, True):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_LEVITATION, True):
                 return "RUNNING"
             return False
         return False
 
-    def running_func(hw_map, t):
+    def running_func(self, t):
         if t == "STOPPED":
-            if hw_map["yun1"].set_remote_relay(RELAY_LEVITATION, False):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_LEVITATION, False):
                 return "STOPPED"
             return False
         return False

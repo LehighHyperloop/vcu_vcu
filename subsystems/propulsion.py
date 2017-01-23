@@ -7,12 +7,12 @@ class Propulsion(Subsystem):
         pass
 
     ### LOGIC ###
-    def stopped_func(hw_map, t):
+    def stopped_func(self, t):
         if t == "RUNNING":
             return "RUNNING"
         return False
 
-    def running_func(hw_map, t):
+    def running_func(self, t):
         if t == "STOPPED":
             return "STOPPED"
         return False

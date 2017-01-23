@@ -1,5 +1,6 @@
 import json
 import string
+import time
 
 class Subsystem():
     _client = None
@@ -39,7 +40,7 @@ class Subsystem():
     def state_transitions(self, current, target):
         func = self._states[current]
         if func:
-            new = func(self.hw_map, target)
+            new = func(self, target)
             return new
         return False
 

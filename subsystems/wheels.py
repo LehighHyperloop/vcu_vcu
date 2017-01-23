@@ -9,16 +9,16 @@ class Wheels(Subsystem):
         pass
 
     ### LOGIC ###
-    def up_func(hw_map, t):
+    def up_func(self, t):
         if t == "DOWN":
-            if hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, True):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, True):
                 return "DOWN"
             return False
         return False
 
-    def down_func(hw_map, t):
+    def down_func(self, t):
         if t == "UP":
-            if hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, False):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_AUX_WHEELS, False):
                 return "UP"
             return False
         return False

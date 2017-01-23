@@ -8,44 +8,47 @@ class Compressor(Subsystem):
     _name = "compressor"
 
     ### LOGIC ###
-    def stopped_func(hw_map, t):
+    def stopped_func(self, t):
         if t == "RUNNING":
-            if hw_map["yun1"].set_remote_relay(RELAY_VFD_ENABLE, True):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_VFD_ENABLE, True):
                 return "VFD_STARTING"
             return False
         return False
 
-    def vfd_starting_func(hw_map, t):
+    def vfd_starting_func(self, t):
         if t == "RUNNING":
-            if hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_ENABLE, True):
+            if self.time_in_state() >= 5 and \
+               self.hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_ENABLE, True):
                 return "COMPRESSOR_STARTING"
             return False
         return False
 
-    def compressor_starting_func(hw_map, t):
+    def compressor_starting_func(self, t):
         if t == "RUNNING":
-            if hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_START, True):
+            if self.time_in_state() >= 5 and \
+               self.hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_START, True):
                 return "RUNNING"
             return False
         return False
 
-    def running_func(hw_map, t):
+    def running_func(self, t):
         # Turn off momentary start button
-        hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_START, False)
+        self.hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_START, False)
         if t == "STOPPED":
             return "COMPRESSOR_STOPPING"
         return False
 
-    def compressor_stopping_func(hw_map, t):
+    def compressor_stopping_func(self, t):
         if t == "STOPPED":
-            if hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_ENABLE, False):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_COMPRESSOR_ENABLE, False):
                 return "VFD_STOPPING"
             return False
         return False
 
-    def vfd_stopping_func(hw_map, t):
+    def vfd_stopping_func(self, t):
         if t == "STOPPED":
-            if hw_map["yun1"].set_remote_relay(RELAY_VFD_ENABLE, False):
+            if self.time_in_state() >= 10 and \
+               self.hw_map["yun1"].set_remote_relay(RELAY_VFD_ENABLE, False):
                 return "STOPPED"
             return False
         return False
