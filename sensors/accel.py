@@ -17,13 +17,13 @@ class Accel():
         return self._prefix + self._location + "/" + self._name
 
     def handle_status_update(self,msg_json):
-        self._buffer.append( (msg_json["x"], msg_json["y"], msg_json["z"]) )
+        self._buffer.append( (float(msg_json["x"]), float(msg_json["y"]), float(msg_json["z"])) )
 
     def rolling_avg(self):
         total = [0,0,0]
         for v in self._buffer:
-            for i in xrange(0,2):
-                total[0] += float(v[i])
+            for i in range(3):
+                total[i] += float(v[i])
 
         return (total[0] / len(self._buffer),
                 total[1] / len(self._buffer),
@@ -32,10 +32,10 @@ class Accel():
     def __repr__(self):
         if len(self._buffer) > 0:
             v = self._buffer[-1]
-            return self._name + "(" + \
-                "x: " + v[0] + \
-                ", y: " + v[1] + \
-                ", z: " + v[2] + \
-                ")" + str(self.rolling_avg())
+            avg = self.rolling_avg()
+            return self._name + "(raw: " + \
+                "raw: ({:0.3f}, {:0.3f}, {:0.3f}) ".format(v[0],v[1],v[2]) + \
+                "avg: ({:0.3f}, {:0.3f}, {:0.3f})".format(avg[0], avg[1], avg[2]) + \
+                ")"
 
         return self._name + "()"
