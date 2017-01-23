@@ -39,6 +39,7 @@ class GlobalState():
             self._current_blocker = None
             new = func(self, self._state)
             if new:
+                self._client.debug("Transition " + self._name + " from " + self._state + " to " + new)
                 self._state = new
                 self._first_state_run = True
         else:

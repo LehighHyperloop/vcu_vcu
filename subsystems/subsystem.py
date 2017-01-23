@@ -15,13 +15,14 @@ class Subsystem():
     _state   = None
 
     def __init__(self, client, hw_map):
-        print "INIT " + self._name
         self._client = client
         self.hw_map = hw_map
         self._states_array = [ k for k,v in self._states.iteritems() ]
 
         self._t_state = self._default_state
         self._state = self._default_state
+
+        self._client.debug(self._name + " init to " + self._state)
 
     def get_topic(self):
         return None

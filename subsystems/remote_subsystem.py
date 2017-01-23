@@ -22,7 +22,6 @@ class Remote_Subsystem(Subsystem):
     _last_update = None
 
     def __init__(self, client, hw_map):
-        print "INIT " + self._name
         self._client = client
         self.hw_map = hw_map
         self._states_array = [ k for k,v in self._states.iteritems() ]
@@ -30,6 +29,8 @@ class Remote_Subsystem(Subsystem):
         self._local_t_state = self._default_state
         self._t_state = self._default_state
         self._state = self._default_state
+
+        self._client.debug(self._name + " init to " + self._state)
 
     def get_topic(self):
         return self._prefix + self._name
@@ -48,6 +49,8 @@ class Remote_Subsystem(Subsystem):
 
     def handle_status_update(self, msg_json):
         self._last_update = time.time()
+        if self._state != msg_json["state"]:
+            self._client.debug("Transition " + self._name + " from " + self._state + " to " + msg_json["state"])
         self._state = msg_json["state"]
         self._t_state = msg_json["t_state"]
 

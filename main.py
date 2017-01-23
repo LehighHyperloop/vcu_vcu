@@ -14,6 +14,14 @@ mqtt_IP = os.environ["MQTT_IP"]
 client.connect(mqtt_IP, 1883)
 client.loop_start()
 
+# Add debug to mqtt
+def debug(msg):
+    client.publish("debug/vcu", msg)
+
+client.debug = debug
+
+client.debug("INIT...")
+
 import hardware
 hw_map = {
     "yun1": hardware.Yun1(client)
@@ -68,15 +76,12 @@ def on_message(mosq, obj, msg):
 
 client.on_message = on_message
 
-def debug(msg):
-    client.publish("debug/vcu", msg)
-
-client.debug = debug
-
 # Register to receive mqtt messages
 client.subscribe("cmd")
 for topic,_ in topic_to_handler.iteritems():
     client.subscribe(topic)
+
+client.debug("INIT COMPLETE")
 
 # Loop in main
 try:
