@@ -19,6 +19,8 @@ class Remote_Subsystem(Subsystem):
     _t_state = None
     _state   = None
 
+    _last_update = None
+
     def __init__(self, client, hw_map):
         print "INIT " + self._name
         self._client = client
@@ -46,8 +48,8 @@ class Remote_Subsystem(Subsystem):
 
     def handle_status_update(self, msg_json):
         self._last_update = time.time()
-        self._current_state = msg_json["state"]
-        self._target_state = msg_json["t_state"]
+        self._state = msg_json["state"]
+        self._t_state = msg_json["t_state"]
 
     def set_target_state(self, target):
         if target in self._states:
@@ -60,7 +62,12 @@ class Remote_Subsystem(Subsystem):
             "t_state": self._local_t_state
         }))
 
+    def last_update_delta(self):
+        if self._last_update is None:
+            return -1
+        return time.time() - self._last_update
+
     def __repr__(self):
         return self._name + "(" + \
             string.join([ k + ": " + str(v) for k, v in self.get_attributes().iteritems() ], ", ") + \
-            ")"
+            ") " + "{:0.4f}s".format(self.last_update_delta())
