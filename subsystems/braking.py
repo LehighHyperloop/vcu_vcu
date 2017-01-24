@@ -11,7 +11,7 @@ class Braking(Subsystem):
     ### LOGIC ###
     def off_func(self, t):
         if t == "ON":
-            if self["yun1"].set_remote_relay(RELAY_BRAKING, True):
+            if self.hw_map["yun1"].set_remote_relay(RELAY_BRAKING, True):
                 return "ON"
             return False
         return False
