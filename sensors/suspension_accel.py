@@ -1,9 +1,9 @@
 from .sensor import Sensor
 import collections
 
-class Accel(Sensor):
+class SuspensionAccel(Sensor):
     _name = "accel"
-    _location = "center"
+    _location = "suspension"
     _buffer = collections.deque(maxlen=10)
 
     def handle_status_update(self,msg_json):
