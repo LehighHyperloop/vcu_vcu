@@ -42,7 +42,8 @@ ss_map = {
 import sensors
 sensor_map = {
     "accel": sensors.Accel(client),
-    "suspension_accel": sensors.SuspensionAccel(client)
+    "suspension_accel": sensors.SuspensionAccel(client),
+    "suspension_distance": sensors.SuspensionDistance(client)
 }
 
 global_state = GlobalState(client, ss_map, sensor_map)

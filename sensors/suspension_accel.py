@@ -1,5 +1,7 @@
 from .sensor import Sensor
+
 import collections
+import time
 
 class SuspensionAccel(Sensor):
     _name = "accel"
@@ -7,6 +9,7 @@ class SuspensionAccel(Sensor):
     _buffer = collections.deque(maxlen=10)
 
     def handle_status_update(self,msg_json):
+        self._last_update = time.time()
         self._buffer.append( (float(msg_json["x"]), float(msg_json["y"]), float(msg_json["z"])) )
 
     def rolling_avg(self):
@@ -27,7 +30,7 @@ class SuspensionAccel(Sensor):
                 self._name + "(" + \
                 "raw: ({:0.3f}, {:0.3f}, {:0.3f}) ".format(v[0],v[1],v[2]) + \
                 "avg: ({:0.3f}, {:0.3f}, {:0.3f})".format(avg[0], avg[1], avg[2]) + \
-                ")"
+                ") " + str(self.last_update()) + "s"
 
         return self._location + "/" + \
-            self._name + "()"
+            self._name + "() " + str(self.last_update()) + "s"
