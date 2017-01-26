@@ -1,6 +1,7 @@
 from .sensor import Sensor
 
 import collections
+import copy
 import time
 
 class Accel(Sensor):
@@ -14,13 +15,14 @@ class Accel(Sensor):
 
     def rolling_avg(self):
         total = [0,0,0]
-        for v in self._buffer:
+        _temp_buffer = copy.copy(self._buffer)
+        for v in _temp_buffer:
             for i in range(3):
                 total[i] += float(v[i])
 
-        return (total[0] / len(self._buffer),
-                total[1] / len(self._buffer),
-                total[2] / len(self._buffer))
+        return (total[0] / len(_temp_buffer),
+                total[1] / len(_temp_buffer),
+                total[2] / len(_temp_buffer))
 
     def __repr__(self):
         if len(self._buffer) > 0:
