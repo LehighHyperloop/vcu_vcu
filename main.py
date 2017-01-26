@@ -31,6 +31,7 @@ import subsystems
 ss_map = {
     "compressor": subsystems.Compressor(client, hw_map),
     "fan": subsystems.Fan(client, hw_map),
+    "lateral_control": subsystems.LateralControl(client, hw_map),
     "levitation": subsystems.Levitation(client, hw_map),
     "propulsion": subsystems.Propulsion(client, hw_map),
     "inverters": subsystems.Inverters(client, hw_map),

@@ -25,4 +25,4 @@ class LateralControl(Subsystem):
         "FAULT": None,
         "ESTOP": None
     }
-    _default_state = "extended_func"
+    _default_state = "EXTENDED"
