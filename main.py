@@ -34,7 +34,7 @@ ss_map = {
     "lateral_control": subsystems.LateralControl(client, hw_map),
     "levitation": subsystems.Levitation(client, hw_map),
     "propulsion": subsystems.Propulsion(client, hw_map),
-    "inverters": subsystems.Inverters(client, hw_map),
+    #"inverters": subsystems.Inverters(client, hw_map),
     "braking": subsystems.Braking(client, hw_map),
     "wheels": subsystems.Wheels(client, hw_map),
     "suspension": subsystems.Suspension(client, hw_map)
@@ -65,17 +65,20 @@ for _,klass in sensor_map.iteritems():
 # Handle messages
 command_handler = CommandHandler(global_state, ss_map)
 def on_message(mosq, obj, msg):
-    if msg.topic == "cmd":
-        command_handler.cmd(msg.payload)
-        return
+    try:
+        if msg.topic == "cmd":
+            command_handler.cmd(msg.payload)
+            return
 
-    msg_json = json.loads(msg.payload)
+        msg_json = json.loads(msg.payload)
 
-    handler = topic_to_handler[msg.topic]
-    if handler is None:
-        print "NOT MAPPED " + msg.topic
-    else:
-        handler.handle_status_update(msg_json)
+        handler = topic_to_handler[msg.topic]
+        if handler is None:
+            print "NOT MAPPED " + msg.topic
+        else:
+            handler.handle_status_update(msg_json)
+    except:
+        print "error on_message: " + msg.topic + ": " + msg.payload
 
 client.on_message = on_message
 
@@ -104,14 +107,17 @@ try:
             hw.send_sync()
 
         # Debug
-        print global_state
-        print spacex_telemetry
-        for name,hw in hw_map.iteritems():
-            print hw
-        for name,ss in ss_map.iteritems():
-            print ss
-        for name,sensor in sensor_map.iteritems():
-            print sensor
+        try:
+            print global_state
+            print spacex_telemetry
+            for name,hw in hw_map.iteritems():
+                print hw
+            for name,ss in ss_map.iteritems():
+                print ss
+            for name,sensor in sensor_map.iteritems():
+                print sensor
+        except:
+            print "Error in debug"
 
         print ""
 
