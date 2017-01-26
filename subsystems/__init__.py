@@ -1,5 +1,6 @@
 from .compressor import Compressor
 from .fan import Fan
+from .lateral_control import LateralControl
 from .levitation import Levitation
 from .propulsion import Propulsion
 from .inverters import Inverters
