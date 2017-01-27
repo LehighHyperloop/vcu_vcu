@@ -114,7 +114,8 @@ class GlobalState():
 
     def launch_func(self, t):
         self._telemetry_state = SPACEX_READY
-        if self.sensor_map["accel"].rolling_avg() >= 0.2 * 9.8 and \
+        x,y,z = self.sensor_map["accel"].rolling_avg()
+        if z >= 0.2 * 9.8 and \
            self.need_ack():
             return "PUSHING"
         return False

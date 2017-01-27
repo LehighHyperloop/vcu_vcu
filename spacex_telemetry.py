@@ -59,11 +59,13 @@ class SpaceXTelemetryFrame():
 class SpaceXTelemetry():
     _name = "spacex_telemetry"
     _global_state = None
+    _sensor_map = None
 
     _last_frame = None
 
-    def __init__(self, global_state):
+    def __init__(self, global_state, sensor_map):
         self._global_state = global_state
+        self._sensor_map = sensor_map
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def send_heartbeat(self):
@@ -75,6 +77,8 @@ class SpaceXTelemetry():
         frame = SpaceXTelemetryFrame()
 
         frame.status = self._global_state.get_telemetry_status()
+        x,y,z = self.sensor_map["accel"].rolling_avg()
+        frame.acceleration = z * 100 # Convert from m/s^2 to cm/s^2
         # TODO: set other frame variables
 
         return frame

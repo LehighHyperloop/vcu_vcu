@@ -48,7 +48,7 @@ sensor_map = {
 }
 
 global_state = GlobalState(client, ss_map, sensor_map)
-spacex_telemetry = SpaceXTelemetry(global_state)
+spacex_telemetry = SpaceXTelemetry(global_state, sensor_map)
 
 topic_to_handler = {}
 

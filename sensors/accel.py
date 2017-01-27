@@ -24,9 +24,14 @@ class Accel(Sensor):
                 total[1] / len(_temp_buffer),
                 total[2] / len(_temp_buffer))
 
+    def last(self):
+        if len(self._buffer) > 0:
+            return self._buffer[-1]
+        return 0
+
     def __repr__(self):
         if len(self._buffer) > 0:
-            v = self._buffer[-1]
+            v = self.last()
             avg = self.rolling_avg()
             return self._location + "/" + \
                 self._name + "(" + \
