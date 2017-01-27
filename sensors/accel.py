@@ -16,6 +16,10 @@ class Accel(Sensor):
     def rolling_avg(self):
         total = [0,0,0]
         _temp_buffer = copy.copy(self._buffer)
+
+        if len(_temp_buffer) == 0:
+            return total
+
         for v in _temp_buffer:
             for i in range(3):
                 total[i] += float(v[i])
