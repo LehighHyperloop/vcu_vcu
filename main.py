@@ -43,6 +43,7 @@ ss_map = {
 import sensors
 sensor_map = {
     "accel": sensors.Accel(client),
+    "rotation": sensors.Rotation(client),
     "suspension_accel": sensors.SuspensionAccel(client),
     "suspension_distance": sensors.SuspensionDistance(client)
 }
