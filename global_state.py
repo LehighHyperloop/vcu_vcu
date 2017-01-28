@@ -161,7 +161,10 @@ class GlobalState():
         self._telemetry_state = SPACEX_COAST
         # TODO:
         # - Pod position >= WHEEL_BRAKING_DISTANCE (TBD, estimated 1000ft from end of track, waiting on mechanical team)
-        if self.greater_than(self.time_in_state(), 1, "Coasting timer"):
+        print self.time_in_state()
+        print self.sensor_map["rotation"].distance()
+        if self.greater_than(self.time_in_state(), 10, "Coasting timer") and \
+           self.greater_than(self.sensor_map["rotation"].distance(), 1000, "1000m"):
             return "BRAKING"
         return False
 

@@ -10,6 +10,9 @@ class Rotation(Sensor):
 
     _speed = 0
     _last_t = 0
+
+    _tick_offset = None
+
     _ticks = 0
     _last_ticks_update = 0
     _last_ticks_update_time = 0
@@ -25,11 +28,19 @@ class Rotation(Sensor):
             self._last_ticks_update_time = time.time()
             self._last_ticks_update = self._ticks
 
+        if self._tick_offset == None:
+            self._tick_offset = self._ticks
+
+    def ticks(self):
+        if self._tick_offset == None:
+            return 0
+        return self._ticks - self._tick_offset
+
     def velocity(self):
         return self._speed
 
     def distance(self):
-        return self._ticks * self.circumference_in_m / 2
+        return self.ticks() * self.circumference_in_m / 2
 
     # If greater than 10 seconds since last tick
     def stopped(self):
@@ -40,6 +51,6 @@ class Rotation(Sensor):
             self._name + "(" + \
             "speed: " + str(self._speed) + ", " + \
             "last_t: " + str(self._last_t) + ", " + \
-            "ticks: " + str(self._ticks) + ", " + \
+            "ticks: " + str(self.ticks()) + ", " + \
             "distance: " + str(self.distance()) + \
             ") " + str(self.last_update()) + "s"
