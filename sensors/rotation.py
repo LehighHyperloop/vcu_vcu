@@ -16,7 +16,7 @@ class Rotation(Sensor):
 
     def handle_status_update(self,msg_json):
         self._last_update = time.time()
-        self._speed = float(msg_json["rps"]) * circumference_in_m
+        self._speed = float(msg_json["rps"]) * self.circumference_in_m
         self._last_t = int(msg_json["last_t"])
         self._ticks = int(msg_json["ticks"])
 
@@ -24,7 +24,7 @@ class Rotation(Sensor):
         return self._speed
 
     def distance(self):
-        return self._ticks * circumference_in_m / 2
+        return self._ticks * self.circumference_in_m / 2
 
     def __repr__(self):
         return self._location + "/" + \
