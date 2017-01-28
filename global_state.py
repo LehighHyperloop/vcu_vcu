@@ -25,10 +25,16 @@ class GlobalState():
     _current_blocker = None
 
     _state_entry_time = None
+    _state_entry_distance = None
 
     def time_in_state(self):
         if self._state_entry_time:
-            return time.time() - self._state_entery_time
+            return time.time() - self._state_entry_time
+        return None
+
+    def distance_in_state(self):
+        if self._state_entry_distance:
+            return self.sensor_map["rotation"].distance() - self._state_entry_distance
         return None
 
     _telemetry_state = SPACEX_IDLE
@@ -38,7 +44,8 @@ class GlobalState():
         self.ss_map = ss_map
         self.sensor_map = sensor_map
         self._state = self._default_state
-        self._state_entery_time = time.time()
+        self._state_entry_time = time.time()
+        self._state_entry_distance = self.sensor_map["rotation"].distance()
 
     def update(self):
         # Run current state
@@ -47,10 +54,13 @@ class GlobalState():
             self._current_blocker = None
             new = func(self, self._state)
             if new:
-                self._state_entery_time = time.time()
+                self._state_entry_time = time.time()
+                self._state_entry_distance = self.sensor_map["rotation"].distance()
                 self._client.debug("Transition " + self._name + " from " + self._state + " to " + new)
                 self._state = new
                 self._first_state_run = True
+            if self._state != "STANDBY" and self._current_blocker:
+                self._client.debug("Blocking: " + self._current_blocker)
         else:
             print "ERROR FINDING STATE " + self._state
 
@@ -99,7 +109,7 @@ class GlobalState():
         if value > target:
             return True
 
-        self._current_blocker = msg
+        self._current_blocker = msg + " (" + str(value) + " > " + str(target) + ")"
         return False
 
     def true(self, value, msg):
@@ -143,7 +153,7 @@ class GlobalState():
         x,y,z = self.sensor_map["accel"].rolling_avg()
 
         if self.greater_than(self.time_in_state(), 1, "Launch timer") and \
-           z >= 0.2 * 9.8:
+           self.greater_than(z, 0.2 * 9.8, "Z accel 0.2g"):
             return "PUSHING"
         return False
 
@@ -153,7 +163,7 @@ class GlobalState():
         # - Pod position > 1600ft
         # - Time in pushing state > PUSHING_TIME_AT_MAX_ACCELERATION (TBD, waiting on mechanical team)
         if self.greater_than(self.time_in_state(), 9.1, "Pushed timer") and \
-           self.sensor_map["rotation"].distance() > (1600 * 12 * 2.54 / 100):
+           self.greater_than(self.distance_in_state(), (1600 * 12 * 2.54 / 100), "Pusher distance in m"):
             return "COASTING"
         return False
 
@@ -161,10 +171,8 @@ class GlobalState():
         self._telemetry_state = SPACEX_COAST
         # TODO:
         # - Pod position >= WHEEL_BRAKING_DISTANCE (TBD, estimated 1000ft from end of track, waiting on mechanical team)
-        print self.time_in_state()
-        print self.sensor_map["rotation"].distance()
         if self.greater_than(self.time_in_state(), 10, "Coasting timer") and \
-           self.greater_than(self.sensor_map["rotation"].distance(), 1000, "1000m"):
+           self.greater_than(self.distance_in_state(), 10, "Coast distance"):
             return "BRAKING"
         return False
 
