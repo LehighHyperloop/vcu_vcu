@@ -7,6 +7,7 @@ import os
 from command_handler import CommandHandler
 from global_state import GlobalState
 from spacex_telemetry import SpaceXTelemetry
+from config import Config
 
 # Setup client
 client = mqtt.Client()
@@ -21,6 +22,8 @@ def debug(msg):
 client.debug = debug
 
 client.debug("INIT...")
+
+config = Config(client)
 
 import hardware
 hw_map = {
@@ -49,7 +52,7 @@ sensor_map = {
     "suspension_distance": sensors.SuspensionDistance(client)
 }
 
-global_state = GlobalState(client, ss_map, sensor_map)
+global_state = GlobalState(client, config, ss_map, sensor_map)
 spacex_telemetry = SpaceXTelemetry(global_state, sensor_map)
 
 topic_to_handler = {}
@@ -65,7 +68,7 @@ for _,klass in sensor_map.iteritems():
 
 
 # Handle messages
-command_handler = CommandHandler(global_state, ss_map)
+command_handler = CommandHandler(global_state, ss_map, config)
 def on_message(mosq, obj, msg):
     try:
         if msg.topic == "cmd":

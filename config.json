@@ -1,0 +1,10 @@
+{
+  "pneumatics_pressure": 180,
+  "levitation_pressure": 100,
+  "launch_timer": 1,
+  "launch_accel_g": 0.1,
+  "pusher_timer": 9.1,
+  "pusher_distance": 487.68,
+  "coasting_timer": 1,
+  "coasting_distance": 10
+}

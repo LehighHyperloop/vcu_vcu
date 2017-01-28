@@ -15,6 +15,7 @@ SPACEX_BRAKING = 5 # Any state when the pod is applying its brakes.
 
 class GlobalState():
     _client = None
+    config = None
     ss_map = None
     sensor_map = None
 
@@ -39,8 +40,9 @@ class GlobalState():
 
     _telemetry_state = SPACEX_IDLE
 
-    def __init__(self, client, ss_map, sensor_map):
+    def __init__(self, client, config, ss_map, sensor_map):
         self._client = client
+        self.config = config
         self.ss_map = ss_map
         self.sensor_map = sensor_map
         self._state = self._default_state
@@ -137,12 +139,18 @@ class GlobalState():
         #   self.set_subsystem_target("suspension", "RUNNING") and \
         #   self.set_subsystem_target("inverters", "RUNNING") and \
         #   self.set_subsystem_target("lateralcontrol", "RUNNING") and \
-        if self.greater_than(self.sensor_map["pressure"].pneumatics(), 180, "Pneumatics pressure") and \
+        if self.greater_than( \
+                self.sensor_map["pressure"].pneumatics(), \
+                self.config.get("pneumatics_pressure"), \
+                "Pneumatics pressure") and \
            self.set_subsystem_target("wheels", "UP") and \
            self.set_subsystem_target("braking", "OFF") and \
            self.set_subsystem_target("fan", "RUNNING") and \
            self.set_subsystem_target("compressor", "RUNNING") and \
-           self.greater_than(self.sensor_map["pressure"].levitation(), 100, "Levitation pressure") and \
+           self.greater_than( \
+                self.sensor_map["pressure"].levitation(), \
+                self.config.get("levitation_pressure"), \
+                "Levitation pressure") and \
            self.set_subsystem_target("levitation", "RUNNING") and \
            self.need_ack():
             return "LAUNCH"
@@ -152,8 +160,14 @@ class GlobalState():
         self._telemetry_state = SPACEX_READY
         x,y,z = self.sensor_map["accel"].rolling_avg()
 
-        if self.greater_than(self.time_in_state(), 1, "Launch timer") and \
-           self.greater_than(z, 0.2 * 9.8, "Z accel 0.2g"):
+        if self.greater_than( \
+                self.time_in_state(), \
+                self.config.get("launch_timer"), \
+                "Launch timer") and \
+           self.greater_than( \
+                z, \
+                self.config.get("launch_accel_g") * 9.8, \
+                "Z accel"):
             return "PUSHING"
         return False
 
@@ -162,8 +176,14 @@ class GlobalState():
         # TODO:
         # - Pod position > 1600ft
         # - Time in pushing state > PUSHING_TIME_AT_MAX_ACCELERATION (TBD, waiting on mechanical team)
-        if self.greater_than(self.time_in_state(), 9.1, "Pushed timer") and \
-           self.greater_than(self.distance_in_state(), (1600 * 12 * 2.54 / 100), "Pusher distance in m"):
+        if self.greater_than( \
+                self.time_in_state(), \
+                self.config.get("pusher_timer"), \
+                "Pushed timer") and \
+           self.greater_than( \
+                self.distance_in_state(), \
+                self.config.get("pusher_distance"), \
+                "Pusher distance in m"):
             return "COASTING"
         return False
 
@@ -171,8 +191,14 @@ class GlobalState():
         self._telemetry_state = SPACEX_COAST
         # TODO:
         # - Pod position >= WHEEL_BRAKING_DISTANCE (TBD, estimated 1000ft from end of track, waiting on mechanical team)
-        if self.greater_than(self.time_in_state(), 10, "Coasting timer") and \
-           self.greater_than(self.distance_in_state(), 10, "Coast distance"):
+        if self.greater_than( \
+                self.time_in_state(), \
+                self.config.get("coast_timer"), \
+                "Coasting timer") and \
+           self.greater_than(
+                self.distance_in_state(), \
+                self.config.get("coast_distance"), \
+                "Coast distance"):
             return "BRAKING"
         return False
 

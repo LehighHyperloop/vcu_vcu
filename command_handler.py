@@ -2,9 +2,10 @@ import string
 import time
 
 class CommandHandler:
-    def __init__(self, global_state, ss_map):
+    def __init__(self, global_state, ss_map, config):
         self.global_state = global_state
         self.ss_map = ss_map
+        self.config = config
 
     def cmd(self, msg_str):
         cmd_split = string.split(msg_str)
@@ -25,3 +26,6 @@ class CommandHandler:
                 print "Unknown global state: " + cmd_split[1]
         elif cmd_split[0] == "ack":
             self.global_state.ack()
+
+        elif cmd_split[0] == "reload":
+            self.config.load()
