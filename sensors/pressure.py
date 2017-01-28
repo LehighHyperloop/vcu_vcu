@@ -16,6 +16,12 @@ class Pressure(Sensor):
         self._levitation = float(msg_json["levitation"])
         self._pneumatics = float(msg_json["pneumatics"])
 
+    def levitation(self):
+        return self._levitation
+
+    def pneumatics(self):
+        return self._pneumatics
+
     def __repr__(self):
         return self._location + "/" + \
             self._name + "(" + \
