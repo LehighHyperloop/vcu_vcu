@@ -79,6 +79,8 @@ class SpaceXTelemetry():
         frame.status = self._global_state.get_telemetry_status()
         x,y,z = self._sensor_map["accel"].rolling_avg()
         frame.acceleration = z * 100 # Convert from m/s^2 to cm/s^2
+        frame.velocity = self._sensor_map["rotation"].velocity() * 100
+        frame.position = self._sensor_map["rotation"].distance() * 100
         # TODO: set other frame variables
 
         return frame
