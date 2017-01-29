@@ -144,6 +144,7 @@ class GlobalState():
                 self.config.get("pneumatics_pressure"), \
                 "Pneumatics pressure") and \
            self.set_subsystem_target("wheels", "UP") and \
+           self.set_subsystem_target("lateral_control", "EXTENDED") and \
            self.set_subsystem_target("braking", "OFF") and \
            self.set_subsystem_target("fan", "RUNNING") and \
            self.set_subsystem_target("compressor", "RUNNING") and \
@@ -151,6 +152,7 @@ class GlobalState():
                 self.sensor_map["pressure"].levitation(), \
                 self.config.get("levitation_pressure"), \
                 "Levitation pressure") and \
+           self.set_subsystem_target("suspension", "RUNNING") and \
            self.set_subsystem_target("levitation", "RUNNING") and \
            self.need_ack():
             return "LAUNCH"
@@ -207,7 +209,6 @@ class GlobalState():
         # TODO:
         # - Pod Velocity == 0
         if self.set_subsystem_target("braking", "ON") and \
-           self.set_subsystem_target("propulsion", "BRAKING") and \
            self.true(self.sensor_map["rotation"].stopped(), "Stopped"):
             return "STOPPED"
         return False
@@ -221,6 +222,7 @@ class GlobalState():
     def disengaged_func(self, t):
         self._telemetry_state = SPACEX_IDLE
         self.set_subsystem_target("levitation", "STOPPED") and \
+        self.set_subsystem_target("suspension", "READY") and \
         self.set_subsystem_target("braking", "OFF") and \
         self.set_subsystem_target("compressor", "STOPPED") and \
         self.set_subsystem_target("fan", "STOPPED")
