@@ -161,15 +161,23 @@ class GlobalState():
     def launch_func(self, t):
         self._telemetry_state = SPACEX_READY
         x,y,z = self.sensor_map["accel"].rolling_avg()
+        suspension_x,suspension_y,suspension_z = self.sensor_map["suspension_accel"].rolling_avg()
 
         if self.greater_than( \
                 self.time_in_state(), \
                 self.config.get("launch_timer"), \
                 "Launch timer") and \
+           ( \
            self.greater_than( \
                 z, \
                 self.config.get("launch_accel_g") * 9.8, \
-                "Z accel"):
+                "Forward accel") \
+            or \
+           self.greater_than( \
+                suspension_x, \
+                self.config.get("launch_accel_g") * 9.8, \
+                "Forward accel") \
+           ):
             return "PUSHING"
         return False
 
